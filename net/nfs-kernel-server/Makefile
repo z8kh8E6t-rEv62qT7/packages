@@ -166,7 +166,9 @@ HOST_CONFIGURE_ARGS += \
 	--disable-gss \
 	--disable-ldap \
 	--disable-nfsrahead \
+	--disable-nfsdcld \
 	--disable-nfsdctl \
+	--disable-nfsv41 \
 	--without-tcp-wrappers \
 	--disable-junction \
 	--with-rpcgen=internal

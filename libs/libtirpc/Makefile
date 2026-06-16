@@ -32,6 +32,7 @@ HOST_CONFIGURE_ARGS += --disable-gssapi --disable-shared --enable-rpcdb
 
 ifeq ($(HOST_OS),Darwin)
 HOST_CONFIGURE_ARGS += --disable-symvers
+HOST_CFLAGS += -D__APPLE_USE_RFC_3542
 endif
 
 TARGET_CFLAGS += -DGQ
