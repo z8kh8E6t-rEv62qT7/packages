@@ -7,29 +7,29 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=node
 
 ifeq ($(CONFIG_NODEJS_22),y)
-PKG_VERSION:=22.22.2
+PKG_VERSION:=22.23.1
 PKG_RELEASE:=1
-PKG_HASH:=f4b9606f33aef725a77b6292460102b48b80902571a8bb94cd769837ee0577df
+PKG_HASH:=f40ff2e6b99196271caffae2b240e9148d66675994afd00e522dad7ecce6f27b
 PATCH_DIR:=./patches/v22.x
-NODEJS_BIN_SUM:=978978a635eef872fa68beae09f0aad0bbbae6757e444da80b570964a97e62a3
-NODEJS_BIN_ARM64_SUM:=b2f3a96f31486bfc365192ad65ced14833ad2a3c2e1bcefec4846902f264fa28
+NODEJS_BIN_SUM:=7a8cb04b4a1df4eaf432125324b81b29a088e73570a23259a8de1c65d07fc129
+NODEJS_BIN_ARM64_SUM:=543fa39e57d4c07855939459a323f4deb9a79dd1bb45e6e99458b0f2de10db8d
 NODE_MODULE_VERSION:=127
 else
-ifeq ($(CONFIG_NODEJS_25),y)
-PKG_VERSION:=25.9.0
+ifeq ($(CONFIG_NODEJS_26),y)
+PKG_VERSION:=26.4.0
 PKG_RELEASE:=1
-PKG_HASH:=d55d77187039d4cd85c732f76838f44e3be552054473459dfa9cc0eb611ea664
-PATCH_DIR:=./patches/v25.x
-NODEJS_BIN_SUM:=134e55b2408448a219760fe04dc44d6851f9de8a79549021ffd870e9082d9e7b
-NODEJS_BIN_ARM64_SUM:=8fb4283301b8c720fc9f18bffff0f659e72cc14d0cf207a3bb411808aaa73a57
-NODE_MODULE_VERSION:=141
+PKG_HASH:=b1d9ebb2f4bea2058f2d105710d8cffbd1af3c0c5c690b1886ce54df098bea16
+PATCH_DIR:=./patches/v26.x
+NODEJS_BIN_SUM:=f221dab30d0e9d544332f06fbee2c62186c97d864d5cac8482dba34f1e38b8dc
+NODEJS_BIN_ARM64_SUM:=773d9ec67266838270ddc105c2548ae8aaff28bc8fe6f34c55d1094043c4165e
+NODE_MODULE_VERSION:=147
 else
-PKG_VERSION:=24.14.1
+PKG_VERSION:=24.18.0
 PKG_RELEASE:=1
-PKG_HASH:=8298cf1f5774093ca819f41b8dd392fd2cff058688b4d5c8805026352e2d31b3
+PKG_HASH:=c8348067b41d8739ec69fd4da615cd8995ad6a76eb53e84a7fa7291c8a477eb7
 PATCH_DIR:=./patches/v24.x
-NODEJS_BIN_SUM:=ace9fa104992ed0829642629c46ca7bd7fd6e76278cb96c958c4b387d29658ea
-NODEJS_BIN_ARM64_SUM:=734ff04fa7f8ed2e8a78d40cacf5ac3fc4515dac2858757cbab313eb483ba8a2
+NODEJS_BIN_SUM:=783130984963db7ba9cbd01089eaf2c2efb055c7c1693c943174b967b3050cb8
+NODEJS_BIN_ARM64_SUM:=6b4484c2190274175df9aa8f28e2d758a819cb1c1fe6ab481e2f95b463ab8508
 NODE_MODULE_VERSION:=137
 endif
 endif
@@ -109,8 +109,8 @@ define Package/node/config
 		config NODEJS_24
 			bool "24.x Active LTS"
 
-		config NODEJS_25
-			bool "25.x Current"
+		config NODEJS_26
+			bool "26.x Current"
 	endchoice
 
 	if PACKAGE_node
@@ -129,6 +129,9 @@ define Package/node/config
 			config NODEJS_ICU_SYSTEM
 				depends on ARCH_64BIT
 				bool "system-icu"
+
+			config NODEJS_FULL_ICU
+				bool "full-icu"
 		endchoice
 	endif
 
@@ -184,7 +187,9 @@ CONFIGURE_ARGS:= \
 	--shared-openssl \
 	--shared-nghttp2 \
 	--shared-cares \
-	--with-intl=$(if $(CONFIG_NODEJS_ICU_SMALL),small-icu,$(if $(CONFIG_NODEJS_ICU_SYSTEM),system-icu,none)) \
+	$(if $(CONFIG_NODEJS_26),--v8-disable-temporal-support) \
+	$(if $(CONFIG_NODEJS_26),$(if $(CONFIG_ARCH_64BIT),,--without-ffi)) \
+	--with-intl=$(if $(CONFIG_NODEJS_ICU_SMALL),small-icu,$(if $(CONFIG_NODEJS_ICU_SYSTEM),system-icu,$(if $(CONFIG_NODEJS_FULL_ICU),full-icu,none))) \
 	$(if $(findstring +neon",$(CONFIG_CPU_TYPE)),--with-arm-fpu=neon) \
 	$(if $(findstring +neon-vfpv4",$(CONFIG_CPU_TYPE)),--with-arm-fpu=neon) \
 	$(if $(findstring +vfpv4",$(CONFIG_CPU_TYPE)),--with-arm-fpu=vfpv3) \

@@ -35,7 +35,7 @@ define Package/openvpn/Default
   CATEGORY:=Network
   URL:=https://openvpn.net/community/
   SUBMENU:=VPN
-  MENU:=1
+  MENU:=2
   DEPENDS:=+kmod-tun \
 	   +libcap-ng \
 	   +OPENVPN_$(1)_ENABLE_LZO:liblzo \
